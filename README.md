@@ -246,5 +246,5 @@ session.setOperations({
 ```
 
 > [!NOTE]
-> As you may have figured out, these function definitions may 
-> as well query a database instead of working with an in-memory map, for improved resilience.
+> As you may have figured out, since these function definitions have an implicit asynchronous nature 
+> they might as well query a database instead of working with an in-memory map, for improved resilience.
