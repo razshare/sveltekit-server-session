@@ -1,6 +1,6 @@
 # SvelteKit Server Session
 
-This library provides an easy way to start, serve and modify and server sessions.
+This library provides an easy way to start, serve and modify server sessions.
 
 Install with:
 
@@ -10,7 +10,8 @@ npm i -D sveltekit-server-session
 
 # Start a session
 
-Use `session::start` to start a session, in requires SvelteKits' `Cookies` interface.
+Use `session.start()` to start a session.\
+It requires SvelteKits' _Cookies_ interface.
 
 ```js
 import { session } from 'sveltekit-server-session'
@@ -20,8 +21,9 @@ export async function GET({ cookies }) {
     return response("hello world")
 }
 ```
+
 > [!NOTE]
-> The `response()` function creates a `Response` and appends to it the required headers for session management.
+> The `response()` function creates a `Response` object and appends to it the headers required for session management.
 
 # A full example
 
@@ -106,3 +108,23 @@ export async function PUT({ cookies, request }) {
 
 ![Peek 2024-04-01 03-15](https://github.com/tncrazvan/sveltekit-server-session/assets/6891346/c633f001-bead-4d94-9927-c1602cd1dfac)
 
+# Lifetime
+
+The only way to start a session is through
+
+```js
+await session.start({ cookies })
+```
+
+Whenever you start a session you're actually trying to retrieve a `KITSESSID` cookie from the client, which holds a session id.
+
+> [!NOTE]
+> Sessions are internally mapped with a `Map<string, Session>` object.\
+> This map's keys are the sessions `id`s of your application.
+
+If the client doesn't hold a session id cookie, then it means it has no session, and a new one is created.
+
+If the client does have a session id but is expired, then the relative session is immediately destroyed, and a new session is created.\
+This new session doesn't contain any of the old session's data.
+
+Finally, if the client has a valid session id cookie, the relative session is retrieved.

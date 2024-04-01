@@ -6,10 +6,9 @@ export {}
  */
 
 /**
- * @template [T = Map<string, any>]
  * @typedef Session
  * @property {string} id Session id (readonly).
- * @property {T} data Session data.
+ * @property {Map<string, any>} data Session data.
  * @property {number} createdUnix Unix timestamp indicating the creation date of the session (readonly).
  * @property {number} expiresAtUnix Unix timestamp of when the session will expire (readonly).
  * @property {GetRemainingSeconds} getRemainingSeconds Get the seconds remaining before the session expires.

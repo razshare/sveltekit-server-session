@@ -29,9 +29,8 @@ const map = new Map()
 
 /**
  * Create a new session.
- * @template [T = Map<string, any>]
  * @param {{id:string,data:any}} payload
- * @returns {import('./types').Session<T>}
+ * @returns {import('./types').Session}
  */
 function create({ id, data }) {
   const created = Math.floor(Date.now() / 1000)
@@ -101,10 +100,9 @@ function isValid({ id }) {
  */
 
 /**
- * @template [T = Map<string, any>]
  * @callback Get
  * @param {string} id Session id.
- * @returns {Promise<import('./types').Unsafe<import('./types').Session<T>>>}
+ * @returns {Promise<import('./types').Unsafe<import('./types').Session>>}
  */
 
 /**
@@ -114,10 +112,9 @@ function isValid({ id }) {
  */
 
 /**
- * @template [T = Map<string, any>]
  * @callback Set
  * @param {string} id Session id.
- * @param {import('./types').Session<T>} session
+ * @param {import('./types').Session} session
  * @returns {Promise<import('./types').Unsafe<void>>}
  */
 
@@ -176,9 +173,8 @@ export const session = {
   /**
    * Start a parked session from `cookies` or create a new one if no
    * parked session is found or is expired.\
-   * @template [T = Map<string, any>]
    * @param {StartPayload} payload
-   * @returns {Promise<import('./types').Unsafe<import('./types').Session<T>>>}
+   * @returns {Promise<import('./types').Unsafe<import('./types').Session>>}
    */
   async start({ cookies }) {
     let id = cookies.get(sessionKey) ?? ''
@@ -196,7 +192,7 @@ export const session = {
     }
 
     /**
-     * @type {import('./types').Session<any>}
+     * @type {import('./types').Session}
      */
     let sessionLocal
 
