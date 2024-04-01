@@ -34,14 +34,14 @@ export async function GET({ cookies }) {
   let sending = false
 
   onMount(async function start() {
-    const response = await fetch('/counter/get')
+    const response = await fetch('/session/quote/get')
     text = await response.text()
     ready = true
   })
 
   async function set() {
     sending = true
-    await fetch('/counter/update', { method: 'PUT', body: text })
+    await fetch('/session/quote/update', { method: 'PUT', body: text })
     sending = false
   }
 </script>
@@ -57,7 +57,7 @@ export async function GET({ cookies }) {
 {/if}
 ```
 ```js
-// src/routes/counter/get/+server.js
+// src/routes/session/quote/get/+server.js
 import { session } from 'sveltekit-server-session'
 
 /**
@@ -85,7 +85,7 @@ export async function GET({ cookies }) {
 ```
 
 ```js
-// src/routes/counter/get/+server.js
+// src/routes/session/quote/update/+server.js
 import { session } from 'sveltekit-server-session'
 
 export async function PUT({ cookies, request }) {
