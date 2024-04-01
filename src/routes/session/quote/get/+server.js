@@ -1,14 +1,5 @@
-import { session } from '$lib/session'
-
-export async function GET({ cookies }) {
-  const {
-    error,
-    value: { data, response },
-  } = await session.start({ cookies })
-
-  if (error) {
-    return new Response(error.message, { status: 500 })
-  }
+export async function GET({ locals }) {
+  const { data, response } = locals.session
 
   if (!data.has('quote')) {
     data.set('quote', 'initial quote')

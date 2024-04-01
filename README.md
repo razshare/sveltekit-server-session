@@ -248,3 +248,70 @@ session.setOperations({
 > [!NOTE]
 > As you may have figured out, since these function definitions have an implicit asynchronous nature 
 > they might as well query a database instead of working with an in-memory map, for improved resilience.
+
+
+# Using SvelteKit Hooks
+
+**You can simplify your developer experience** by moving the session login into your `src/hooks.server.js`.
+
+1. First of all create a new `src/hooks.server.js`.
+
+1. Then move your session management logic in your `handle` function
+  ```js
+  import { session } from 'sveltekit-server-session';
+
+  /**
+   * @type {import("@sveltejs/kit").Handle}
+   */
+  export async function handle({ event, resolve }) {
+    const { error, value: sessionLocal } = await session.start({ cookies: event.cookies });
+
+    if (error) {
+      return new Response(error.message, { status: 500 });
+    }
+
+    event.locals.session = sessionLocal;  // <=== Set session here.
+                                          // You will get a type hinting error, this is normal.
+                                          // See next step in order to fix this.
+
+    const response = await resolve(event);
+
+    for (const [key, value] of sessionLocal.response().headers) {
+      response.headers.set(key, value);
+    }
+
+    return response;
+  }
+  ```
+1. Open your `src/app.d.ts` file and define your _session_ key under `interface Locals`
+  ```ts
+  // See https://kit.svelte.dev/docs/types#app
+
+  import type { Session } from 'sveltekit-server-session';
+
+  // for information about these interfaces
+  declare global {
+    namespace App {
+      // interface Error {}
+      interface Locals {
+        session: Session; // <== Here.
+      }
+      // interface PageData {}
+      // interface PageState {}
+      // interface Platform {}
+    }
+  }
+
+  export {};
+  ```
+
+And you're done, now all you have to do is destruct your session from your endpoints like so
+
+```js
+// src/routes/session/quote/update/+server.js
+export async function PUT({ locals, request }) {
+  const { data, response } = locals.session
+  data.set('quote', await request.text())
+  return response(data.get('quote'))
+}
+```
