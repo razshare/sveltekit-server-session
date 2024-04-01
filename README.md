@@ -206,7 +206,7 @@ You can customize your sessions behavior with `session.setOperations()`.
 All non local operations related to session management are described by `SessionInterface`.\
 Even though some operations may appear to act directly on an instance of a session, like `.destroy()`, in reality they all use only operations defined bt `SessionInterface`.
 
-This means you have total control over how sessions are retrieved, modified, deleted, persisted and validated.
+This means you have total control over how sessions are retrieved, modified, deleted, validated and perhaps even persisted to a remove storage.
 
 Here's an example of how to set a custom set of operations for session management
 
