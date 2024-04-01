@@ -364,7 +364,7 @@ And our `+page.svelte` file is simplified even further
 
 Simple as that.
 
-# Don't preload
+# Don't Preload
 
 SvelteKit comes with preload features baked in, however these feature may result in some inconsistent behavior when dealing with server state, like sessions.
 
