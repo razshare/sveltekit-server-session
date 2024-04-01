@@ -250,7 +250,7 @@ session.setOperations({
 > they might as well query a database instead of working with an in-memory map, for improved resilience.
 
 
-# Using SvelteKit Hooks
+# Recommended usage - SvelteKit hooks
 
 **You can simplify your developer experience** by moving the session login into your `src/hooks.server.js`.
 
