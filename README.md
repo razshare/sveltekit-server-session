@@ -385,7 +385,7 @@ Navigate to your `src/app.html` file and disable preloading by settings `data-sv
 </html>
 ```
 
-The reason for this is due to inconsistencies to how state may change a browser page caching.
+The reason for this is due to inconsistencies to how state may become out of sync after preloading.
 
 Consider the following use case,
 
