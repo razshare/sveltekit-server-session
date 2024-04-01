@@ -23,14 +23,14 @@
   let sending = false
 
   onMount(async function start() {
-    const response = await fetch('/counter/get')
+    const response = await fetch('/session/counter/get')
     text = await response.text()
     ready = true
   })
 
   async function set() {
     sending = true
-    await fetch('/counter/update', { method: 'PUT', body: text })
+    await fetch('/session/counter/update', { method: 'PUT', body: text })
     sending = false
   }
 </script>
