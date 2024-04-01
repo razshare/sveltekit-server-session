@@ -368,7 +368,7 @@ Simple as that.
 
 SvelteKit comes with preload features baked in, however these feature may result in some inconsistent behavior when dealing with server state, like sessions.
 
-Navigate to your src/app.html file and disable preloading by settings `data-sveltekit-preload-data` to `false` on your `body` element.
+Navigate to your `src/app.html` file and disable preloading by settings `data-sveltekit-preload-data` to `false` on your `body` element.
 
 ```html
 <!DOCTYPE html/>
