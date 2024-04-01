@@ -62,12 +62,6 @@ export async function GET({ cookies }) {
 // src/routes/session/quote/get/+server.js
 import { session } from 'sveltekit-server-session'
 
-/**
- * Periodically remove abandoned sessions.\
- * Every 1 minute in this example.
- */
-setInterval(session.flush, 1000 * 60)
-
 export async function GET({ cookies }) {
   const {
     error,
@@ -318,7 +312,7 @@ export async function PUT({ locals, request }) {
 
 # Recommended Usage
 
-So far the development process has always involved using a `fetch('/session/quote/get')`  call to retrieve the initial value of the `quote`, but that is not necessary, we can simplify things even further by building on top of the [Using SvelteKit Hooks section](#using-sveltekit-hooks).
+So far the development process in the [example above](#an-example) has involved using a `fetch('/session/quote/get')`  call to retrieve the initial value of the `quote`, but that is not necessary, we can simplify things even further by building on top of the [Using SvelteKit Hooks section](#using-sveltekit-hooks).
 
 Since the hook handler defined above populates our `locals` prop, this means we now have access to the session from any `+page.server.js` file, so the following is now possible
 
