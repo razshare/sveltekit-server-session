@@ -1,6 +1,6 @@
 # SvelteKit Server Session
 
-This library provides an easy way to create and read sessions in `+server.js` files.
+This library provides an easy way to create and read server sessions.
 
 Install with:
 
