@@ -132,17 +132,17 @@ Finally, if the client has a valid session id cookie, the relative session is re
 \
 Starting a session should always succeed, wether it is by creating a new session or retrieving an existing one.
 
-# Flush
+# Destroy & Flush
 
 As explained above, in the [lifetime section](#lifetime), clients that present an expired session id have their sessions destroyed immediately.
 
-However, this mechanism assumes clients are very active.\
-Sometimes clients abandon their sessions and never awaken them again.
+But sometimes clients want to create new sessions regardless if the current one has expired or not.
+Other times clients abandon their sessions and never awaken them again.
 
-This can be a problem.
+These use cases can be a problem.
 
-Even though these sessions are not active, they will still use some memory.\
-They must be destroyed one way or another.
+Even though these "abandoned" sessions are not active, they will still use some memory, 
+so they must be destroyed one way or another.
 
 **You can use `destroy()`**
 ```js
@@ -179,14 +179,69 @@ export async function GET({ cookies }) {
 ```
 to destroy each session manually.
 
-> [!NOTE]
-> For example this may be useful to invoke
-> when clicking a _logout_ button.
+For example this may be useful to invoke when clicking a _logout_ button.
 
 ![Peek 2024-04-01 04-50](https://github.com/tncrazvan/sveltekit-server-session/assets/6891346/9c096805-ce5b-4883-b8e3-5dc25499c7fd)
+
+
+### However one problem still remains
+
+> Other times clients abandon their sessions and never awaken them again.
+
+When a client simply stops using your application for days even, destroying a session can become a bit more convoluted, 
+because in those cases there's no client to click the hypothetical _logout_ button.
+
+**So what do we do?**
+
+The answer is _nothing_, this library takes care of that.
+
+Whenever you create a session, a destructor function is automatically dispatched to destroy the session when it expires.\
+This is simply achieved through the event loop, using a `Timer` through `setTimeout`.
 
 
 # Custom behavior
 
 You can customize your session manager's behavior with `session.setOperations()`.
 
+All non local operations related to session management are described by `SessionInterface`.\
+Even though some operations may appear to act directly on an instance of a session, like `.destroy()`, in reality they all use only operations defined bt `SessionInterface`.
+
+This means you have total control over how sessions are saved, deleted, wrote and validated.\
+In fact your sessions don't even have to be _in-memory_, you could use a CRUD repository to manage your sessions, like a database.
+
+Here's an example of how to set a custom set of operations for session management
+
+```js
+import { ok } from 'sveltekit-unsafe' // peer dependency
+import { session } from 'sveltekit-server-session'
+/**
+ * @type {Map<string,import('$lib/types').Session>}
+ */
+const map = new Map()
+session.setOperations({
+  async exists(id) {
+    return ok(map.has(id))
+  },
+  async isValid(id) {
+    const session = map.get(id)
+    if (!session) {
+      return ok(false)
+    }
+    return ok(session.getRemainingSeconds() > 0)
+  },
+  async has(id) {
+    return ok(map.has(id))
+  },
+  async get(id) {
+    return ok(map.get(id))
+  },
+  async set(id, session) {
+    map.set(id, session)
+    return ok()
+  },
+  async delete(id) {
+    map.delete(id)
+    return ok()
+  },
+})
+```

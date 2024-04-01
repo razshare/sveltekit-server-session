@@ -1,8 +1,16 @@
 export {}
 
 /**
- * @template T
- * @typedef {{value:T,error:false|Error}} Unsafe
+ * @typedef {"destroy"} Events
+ */
+
+/**
+ * @typedef {Map<Events,Array<function(Session):void>>} EventsMap
+ */
+
+/**
+ * @callback EventCallback
+ * @param {Session} session
  */
 
 /**
@@ -14,11 +22,25 @@ export {}
  * @property {GetRemainingSeconds} getRemainingSeconds Get the seconds remaining before the session expires.
  * @property {Destroy} destroy Get the seconds remaining before the session expires.
  * @property {ResponseCreator} response Create a new `Response` with the required headers for managing the session.
+ * @property {AddEventListener} addEventListener Add an event listener.
+ * @property {RemoveEventListener} removeEventListener Remove an event listener.
+ */
+
+/**
+ * @callback AddEventListener
+ * @param {Events} event
+ * @param {EventCallback} callback
+ */
+
+/**
+ * @callback RemoveEventListener
+ * @param {Events} event
+ * @param {EventCallback} callback
  */
 
 /**
  * @callback Destroy
- * @returns {Promise<Unsafe<void>>}
+ * @returns {Promise<import("sveltekit-unsafe").Unsafe<void>>}
  */
 
 /**

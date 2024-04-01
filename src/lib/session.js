@@ -15,8 +15,13 @@
  * @property {string} id Session id.
  */
 
-import { error } from './error'
-import { ok } from './ok'
+/**
+ * @typedef CreatePayload
+ * @property {string} id
+ * @property {any} data
+ */
+
+import { ok, error } from 'sveltekit-unsafe'
 import { uuid } from './uuid'
 
 let sessionKey = 'KITSESSID'
@@ -29,13 +34,25 @@ const map = new Map()
 
 /**
  * Create a new session.
- * @param {{id:string,data:any}} payload
+ * @param {CreatePayload} payload
  * @returns {import('./types').Session}
  */
 function create({ id, data }) {
   const created = Math.floor(Date.now() / 1000)
   const duration = durationUnix
   const expiresAtUnix = created + duration
+  let destroying = false
+  let destroyed = false
+
+  /**
+   * @type {import('./types').EventsMap}
+   */
+  const events = new Map()
+
+  /**
+   * @type {Array<import('./types').EventCallback>}
+   */
+  events.set('destroy', [])
 
   return {
     get id() {
@@ -56,11 +73,50 @@ function create({ id, data }) {
       return remaining >= 0 ? remaining : 0
     },
     async destroy() {
+      if (destroyed) {
+        return ok()
+      }
+      if (destroying) {
+        // eslint-disable-next-line @typescript-eslint/no-this-alias
+        const self = this
+        return new Promise(function start(resolve) {
+          self.addEventListener('destroy', function start() {
+            resolve(ok())
+          })
+        })
+      }
+      destroying = true
       const destroyAttempt = await _interface.delete(id)
       if (destroyAttempt.error) {
         return destroyAttempt
       }
+      destroyed = true
+      const callbacks = events.get('destroy') ?? []
+
+      for (const callback of callbacks) {
+        callback(this)
+      }
+
       return ok()
+    },
+    addEventListener(event, callback) {
+      const callbacks = events.get(event)
+      if (!callbacks) {
+        return
+      }
+      callbacks.push(callback)
+    },
+    removeEventListener(event, callback) {
+      const callbacks = events.get(event)
+      if (!callbacks) {
+        return
+      }
+
+      callbacks.filter(function pass(callbackLocal) {
+        return callbackLocal !== callback
+      })
+
+      events.set(event, callbacks)
     },
     response(body, init) {
       const cookieName = encodeURI(sessionKey)
@@ -78,51 +134,40 @@ function create({ id, data }) {
 }
 
 /**
- * @param {{id:string}} payload
- */
-function isValid({ id }) {
-  const session = map.get(id)
-  if (!session) {
-    return false
-  }
-  return session.getRemainingSeconds() > 0
-}
-
-/**
  * @callback Exists
  * @param {string} id Session id.
- * @returns {Promise<import('./types').Unsafe<boolean>>}
+ * @returns {Promise<import('sveltekit-unsafe').Unsafe<boolean>>}
  */
 
 /**
  * @callback IsValid
  * @param {string} id Session id.
- * @returns {Promise<import('./types').Unsafe<boolean>>}
+ * @returns {Promise<import('sveltekit-unsafe').Unsafe<boolean>>}
  */
 
 /**
  * @callback Has
  * @param {string} id Session id.
- * @returns {Promise<import('./types').Unsafe<boolean>>}
+ * @returns {Promise<import('sveltekit-unsafe').Unsafe<boolean>>}
  */
 
 /**
  * @callback Get
  * @param {string} id Session id.
- * @returns {Promise<import('./types').Unsafe<import('./types').Session>>}
+ * @returns {Promise<import('sveltekit-unsafe').Unsafe<import('./types').Session>>}
  */
 
 /**
  * @callback Delete
  * @param {string} id Session id.
- * @returns {Promise<import('./types').Unsafe<void>>}
+ * @returns {Promise<import('sveltekit-unsafe').Unsafe<void>>}
  */
 
 /**
  * @callback Set
  * @param {string} id Session id.
  * @param {import('./types').Session} session
- * @returns {Promise<import('./types').Unsafe<void>>}
+ * @returns {Promise<import('sveltekit-unsafe').Unsafe<void>>}
  */
 
 /**
@@ -144,7 +189,11 @@ let _interface = {
     return ok(map.has(id))
   },
   async isValid(id) {
-    return ok(isValid({ id }))
+    const session = map.get(id)
+    if (!session) {
+      return ok(false)
+    }
+    return ok(session.getRemainingSeconds() > 0)
   },
   async has(id) {
     return ok(map.has(id))
@@ -181,7 +230,7 @@ export const session = {
    * Start a parked session from `cookies` or create a new one if no
    * parked session is found or is expired.\
    * @param {StartPayload} payload
-   * @returns {Promise<import('./types').Unsafe<import('./types').Session>>}
+   * @returns {Promise<import('sveltekit-unsafe').Unsafe<import('./types').Session>>}
    */
   async start({ cookies }) {
     let id = cookies.get(sessionKey) ?? ''
@@ -223,12 +272,20 @@ export const session = {
       }
     }
 
+    const timer = setTimeout(async function run() {
+      await sessionLocal.destroy()
+    })
+
+    sessionLocal.addEventListener('destroy', function run() {
+      clearTimeout(timer)
+    })
+
     return ok(sessionLocal)
   },
   /**
    * Destroy a session.
    * @param {{id:string}} payload
-   * @returns {Promise<import('./types').Unsafe<void>>} Error if no session with the given `id` is found, otherwise success.
+   * @returns {Promise<import('sveltekit-unsafe').Unsafe<void>>} Error if no session with the given `id` is found, otherwise success.
    */
   async destroy({ id }) {
     const getAttempt = await _interface.get(id)
@@ -259,11 +316,11 @@ export const session = {
     }
     flushing = true
     /**
-     * @type {Array<Promise<import('./types').Unsafe<void>>>}
+     * @type {Array<Promise<import('sveltekit-unsafe').Unsafe<void>>>}
      */
     const destructors = []
     for (const [, session] of map) {
-      if (isValid({ id: session.id })) {
+      if (await _interface.isValid(session.id)) {
         continue
       }
       destructors.push(session.destroy())
