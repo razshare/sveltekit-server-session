@@ -16,12 +16,14 @@ Use `session::start` to start a session, in requires SvelteKits' `Cookies` inter
 import { session } from 'sveltekit-server-session'
 
 export async function GET({ cookies }) {
-    await session.start({ cookies })
-    // ...
+    const {data, response} await session.start({ cookies })
+    return response("hello world")
 }
 ```
+> [!NOTE]
+> The `response()` function creates a `Response` and appends to it the required headers for session management.
 
-A full example
+# A full example
 
 ```svelte
 <!-- src/routes/+page.svelte -->
