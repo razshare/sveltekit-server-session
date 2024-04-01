@@ -255,7 +255,6 @@ export const session = {
       return
     }
     flushing = true
-    console.log('Flushing...', sessions)
     const promisses = []
     /**
      * @type {Array<string>}
@@ -273,7 +272,6 @@ export const session = {
     }
 
     await Promise.all(promisses)
-    console.log('Done flushing.', sessions)
     flushing = false
   },
 }
