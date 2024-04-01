@@ -1,6 +1,6 @@
 # SvelteKit Server Session
 
-This library provides an easy way to create and read server sessions.
+This library provides an easy way to start, serve and modify and server sessions.
 
 Install with:
 
