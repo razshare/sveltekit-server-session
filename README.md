@@ -128,3 +128,63 @@ If the client does have a session id but is expired, then the relative session i
 This new session doesn't contain any of the old session's data.
 
 Finally, if the client has a valid session id cookie, the relative session is retrieved.
+\
+\
+Starting a session should always succeed, wether it is by creating a new session or retrieving an existing one.
+
+# Flush
+
+As explained above, in the [lifetime section](#lifetime), clients that present an expired session id have their sessions destroyed immediately.
+
+However, this mechanism assumes clients are very active.\
+Sometimes clients abandon their sessions and never awaken them again.
+
+This can be a problem.
+
+Even though these sessions are not active, they will still use some memory.\
+They must be destroyed one way or another.
+
+**You can use `destroy()`**
+```js
+// src/routes/session/destroy/+server.js
+import { session } from 'sveltekit-server-session'
+
+/**
+ *
+ * @param {number} milliseconds
+ * @returns {Promise<void>}
+ */
+function delay(milliseconds) {
+  return new Promise(function start(resolve) {
+    setTimeout(resolve, milliseconds)
+  })
+}
+
+export async function GET({ cookies }) {
+  const {
+    error,
+    value: { destroy },
+  } = await session.start({ cookies })
+
+  if (error) {
+    return new Response(error.message, { status: 500 })
+  }
+
+  await destroy()
+
+  await delay(3000)
+
+  return new Response('Session destroyed.')
+}
+```
+to destroy each session manually.
+
+> [!NOTE]
+> For example this may be useful to invoke
+> when clicking a _logout_ button.
+
+
+# Custom behavior
+
+You can customize your session manager's behavior with `session.setOperations()`.
+

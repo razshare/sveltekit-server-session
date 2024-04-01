@@ -55,6 +55,13 @@ function create({ id, data }) {
       const remaining = expiresAtUnix - now
       return remaining >= 0 ? remaining : 0
     },
+    async destroy() {
+      const destroyAttempt = await _interface.delete(id)
+      if (destroyAttempt.error) {
+        return destroyAttempt
+      }
+      return ok()
+    },
     response(body, init) {
       const cookieName = encodeURI(sessionKey)
       const cookieValue = encodeURI(id)
@@ -251,23 +258,18 @@ export const session = {
       return
     }
     flushing = true
-    const promisses = []
     /**
-     * @type {Array<string>}
+     * @type {Array<Promise<import('./types').Unsafe<void>>>}
      */
-    const toBeRemoved = []
+    const destructors = []
     for (const [, session] of map) {
       if (isValid({ id: session.id })) {
         continue
       }
-      toBeRemoved.push(session.id)
+      destructors.push(session.destroy())
     }
 
-    for (const id of toBeRemoved) {
-      promisses.push(_interface.delete(id))
-    }
-
-    await Promise.all(promisses)
+    await Promise.all(destructors)
     flushing = false
   },
 }
