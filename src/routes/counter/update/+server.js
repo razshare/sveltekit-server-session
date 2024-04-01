@@ -1,12 +1,6 @@
 import { session } from '$lib/session'
 
-/**
- * Periodically remove abandoned sessions.\
- * Every 1 minute in this example.
- */
-setInterval(session.flush, 1000 * 60)
-
-export async function GET({ cookies }) {
+export async function PUT({ cookies, request }) {
   const {
     error,
     value: { data, response },
@@ -16,9 +10,7 @@ export async function GET({ cookies }) {
     return new Response(error.message, { status: 500 })
   }
 
-  if (!data.has('quote')) {
-    data.set('quote', 'initial quote')
-  }
+  data.set('quote', await request.text())
 
   return response(data.get('quote'))
 }

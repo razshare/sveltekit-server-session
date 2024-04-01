@@ -25,7 +25,7 @@ let durationUnix = 60 * 60 * 24 * 7 // 7 days
 /**
  * @type {Map<string,import('./types').Session>}
  */
-const sessions = new Map()
+const map = new Map()
 
 /**
  * Create a new session.
@@ -75,7 +75,7 @@ function create({ id, data }) {
  * @param {{id:string}} payload
  */
 function isValid({ id }) {
-  const session = sessions.get(id)
+  const session = map.get(id)
   if (!session) {
     return false
   }
@@ -137,23 +137,23 @@ function isValid({ id }) {
  */
 let _interface = {
   async exists(id) {
-    return ok(sessions.has(id))
+    return ok(map.has(id))
   },
   async isValid(id) {
     return ok(isValid({ id }))
   },
   async has(id) {
-    return ok(sessions.has(id))
+    return ok(map.has(id))
   },
   async get(id) {
-    return ok(sessions.get(id))
+    return ok(map.get(id))
   },
   async set(id, session) {
-    sessions.set(id, session)
+    map.set(id, session)
     return ok()
   },
   async delete(id) {
-    sessions.delete(id)
+    map.delete(id)
     return ok()
   },
 }
@@ -260,7 +260,7 @@ export const session = {
      * @type {Array<string>}
      */
     const toBeRemoved = []
-    for (const [, session] of sessions) {
+    for (const [, session] of map) {
       if (isValid({ id: session.id })) {
         continue
       }

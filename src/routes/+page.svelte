@@ -1,22 +1,46 @@
+<style>
+  .content {
+    position: fixed;
+    left: 0;
+    right: 0;
+    top: 0;
+    bottom: 0;
+    overflow-x: hidden;
+    padding: 1rem;
+    display: grid;
+    justify-content: center;
+    align-content: center;
+  }
+  textarea {
+    max-width: 100%;
+  }
+</style>
+
 <script>
   import { onMount } from 'svelte'
-  let counter = 0
+  let text = ''
   let ready = false
+  let sending = false
 
   onMount(async function start() {
     const response = await fetch('/counter/get')
-    counter = await response.json()
+    text = await response.text()
     ready = true
   })
 
-  async function increase() {
-    await fetch('/counter/increase', { method: 'PUT' })
-    counter++
+  async function set() {
+    sending = true
+    await fetch('/counter/update', { method: 'PUT', body: text })
+    sending = false
   }
 </script>
 
 {#if ready}
-  <button on:mouseup={increase}>
-    <span>Increase ({counter})</span>
-  </button>
+  <div class="content">
+    <textarea bind:value={text}></textarea>
+    <br />
+    <button disabled={sending} on:mouseup={set}>
+      <span>Save</span>
+    </button>
+  </div>
 {/if}

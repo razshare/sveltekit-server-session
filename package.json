@@ -1,5 +1,5 @@
 {
-  "name": "sveltekit-session",
+  "name": "sveltekit-server-session",
   "version": "0.1.0",
   "scripts": {
     "dev": "vite dev",
