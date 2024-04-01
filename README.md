@@ -183,6 +183,8 @@ to destroy each session manually.
 > For example this may be useful to invoke
 > when clicking a _logout_ button.
 
+![Peek 2024-04-01 04-50](https://github.com/tncrazvan/sveltekit-server-session/assets/6891346/9c096805-ce5b-4883-b8e3-5dc25499c7fd)
+
 
 # Custom behavior
 
