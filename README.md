@@ -199,7 +199,7 @@ Whenever you create a session, a destructor function is automatically dispatched
 This is simply achieved through the event loop, using a `Timer` through `setTimeout`.
 
 
-# Custom behavior
+# Custom Behavior
 
 You can customize your sessions behavior with `session.setOperations()`.
 
