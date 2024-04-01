@@ -116,7 +116,7 @@ The only way to start a session is through
 await session.start({ cookies })
 ```
 
-Whenever you start a session you're actually trying to retrieve a `KITSESSID` cookie from the client, which holds a session id.
+Whenever you start a session you're actually trying to retrieve a `KITSESSID` cookie from the client, which should hold a session id.
 
 > [!NOTE]
 > Sessions are internally mapped with a `Map<string, Session>` object.\
