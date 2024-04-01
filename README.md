@@ -414,9 +414,9 @@ It's much easier and more straightforward to simply disable preloading.
 > Obviously you can still enable preload for resources like assets by manually adding 
 > the `data-sveltekit-preload-data="hover"` attribute to specific elements in your page.
 
-# Full Example
+# Complete Example
 
-**You can find a [full example leveraging the recommended usage here](https://github.com/tncrazvan/sveltekit-server-session-example).**
+**You can find a [complete example leveraging the recommended usage here](https://github.com/tncrazvan/sveltekit-server-session-example).**
 
 
 > [!NOTE]
