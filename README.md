@@ -25,7 +25,7 @@ export async function GET({ cookies }) {
 > [!NOTE]
 > The `response()` function creates a `Response` object and appends to it the headers required for session management.
 
-# A full example
+# An example
 
 ```svelte
 <!-- src/routes/+page.svelte -->
@@ -250,7 +250,7 @@ session.setOperations({
 > they might as well query a database instead of working with an in-memory map, for improved resilience.
 
 
-# Recommended Usage - SvelteKit Hooks
+# Using SvelteKit Hooks
 
 **You can simplify your developer experience** by moving the session management logic into your `src/hooks.server.js`.
 
@@ -315,3 +315,113 @@ export async function PUT({ locals, request }) {
   return response(data.get('quote'))
 }
 ```
+
+# Recommended Usage
+
+So far the development process has always involved using a `fetch('/session/quote/get')`  call to retrieve the initial value of the `quote`, but that is not necessary, we can simplify things even further by building on top of the [Using SvelteKit Hooks section](#using-sveltekit-hooks).
+
+Since the hook handler defined above populates our `locals` prop, this means we now have access to the session from any `+page.server.js` file, so the following is now possible
+
+```js
+// src/routes/+page.server.js
+/**
+ * @type {import("./$types").PageServerLoad}
+ */
+export function load({ locals }) {
+  const { data } = locals.session;
+
+  if (!data.has('quote')) {
+    data.set('quote', 'initial quote');
+  }
+
+  return {
+    text: data.get('quote')
+  };
+}
+```
+
+There is no need for the `src/routes/session/quote/get/+server.js` file anymore, it can be removed.
+
+And our `+page.svelte` file is simplified even further
+
+```svelte
+<!-- src/routes/+page.svelte -->
+<script>
+  /** @type {import('./$types').PageData} */
+  export let data;
+
+  let sending = false;
+
+  async function set() {
+    sending = true;
+    await fetch('/session/quote/update', { method: 'PUT', body: data.text });
+    sending = false;
+  }
+</script>
+
+<div class="content">
+  <textarea bind:value={data.text}></textarea>
+  <br />
+  <button disabled={sending} on:mouseup={set}>
+    <span>Save</span>
+  </button>
+</div>
+```
+
+Simple as that.
+
+# Don't preload
+
+SvelteKit comes with preload features baked in, however these feature may result in some inconsistent behavior when dealing with server state, like sessions.
+
+Navigate to your src/app.html file and disable preloading by settings `data-sveltekit-preload-data` to `false` on your `body` element.
+
+```html
+<!DOCTYPE html/>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <link rel="icon" href="%sveltekit.assets%/favicon.png" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    %sveltekit.head%
+  </head>
+  <body data-sveltekit-preload-data="false"> <!-- Here. -->
+    <div>%sveltekit.body%</div>
+  </body>
+</html>
+```
+
+The reason for this is due to inconsistencies to how state may change a browser page caching.
+
+Consider the following use case,
+
+ 1. Let's say I want to modify my session in some way.
+ 2. Then I want to destroy my session, but the act of destroying it takes a while.
+ 3. In the meantime, by mistake, I hover over some link that preloads the previous page, with the old state.
+ 4. Then the session is destroyed, in this order.
+ 5. Well now if I navigate back to that page, the session state is not updated, because according to SvelteKit it has already preloaded it, and we're good to go.
+
+Which is obviously wrong.
+
+You could technically disable preloading for specific cases and avoid the issue in that way, but at some point your whole application will be filled with links that point to some page that depends on the server session.\
+It's just simply not worth the headache.
+
+It's much easier and more straightforward to simply disable preloading.
+
+> [!NOTE]
+> Obviously you can still enable preload for resources like assets by manually adding 
+> the `data-sveltekit-preload-data="hover"` attribute to specific elements in your page.
+
+# Full Example
+
+**You can find a full example leveraging the recommended usage [here](https://github.com/tncrazvan/sveltekit-server-session-example).**
+
+
+> [!NOTE]
+> Remember to run your SvelteKit server dev at least 
+> once to properly generate your glue types.
+
+> [!NOTE]
+> Due to technical limitations, and frankly also
+> for security reasons, sessions are only directly available under `*.server.js` and `*.server.ts` files.\
+> Sessions are meant to be private data, so they will never be directly available [under universal files](https://kit.svelte.dev/docs/load#universal-vs-server) like `+page.js`, for example.

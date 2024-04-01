@@ -26,6 +26,10 @@
 </script>
 
 <div class="content">
+  <a href="/">
+    <span>&lt; Back</span>
+  </a>
+  <br />
   <button disabled={sending} on:mouseup={destroy}>
     <span>Destroy</span>
   </button>
