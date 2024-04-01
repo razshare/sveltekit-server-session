@@ -170,7 +170,7 @@ export async function GET({ cookies }) {
     return new Response(error.message, { status: 500 })
   }
 
-  await destroy()    // Destroy the session here.
+  await destroy()    // <=== Destroy the session here.
 
   await delay(3000)
 
