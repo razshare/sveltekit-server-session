@@ -395,11 +395,19 @@ The reason for this is due to inconsistencies to how state may change a browser 
 
 Consider the following use case,
 
- 1. Let's say I want to modify my session in some way.
- 2. Then I want to destroy my session, but the act of destroying it takes a while.
- 3. In the meantime, by mistake, I hover over some link that preloads the previous page, with the old state.
- 4. Then the session is destroyed, in this order.
- 5. Well now if I navigate back to that page, the session state is not updated, because according to SvelteKit it has already preloaded it, and we're good to go.
+ 1. Let's say I want to modify my session in some way.<br/><br/>
+    ![1](https://github.com/tncrazvan/sveltekit-server-session/assets/6891346/0bff9ac4-c838-44d6-a832-48781c066c10)
+    <br/>
+ 2. Then I want to destroy my session, but the act of destroying it takes a while.<br/><br/>
+    ![2](https://github.com/tncrazvan/sveltekit-server-session/assets/6891346/d8b90670-414f-4aff-8e1a-e4affd823eea)
+    <br/>
+ 3. In the meantime, by mistake, I hover over some link that preloads the previous page, with the old state.<br/><br/>
+    ![3](https://github.com/tncrazvan/sveltekit-server-session/assets/6891346/13225796-0204-46e1-b60b-b1a785e1324f)
+    <br/>
+ 4. Then the session is finally destroyed, in this order.<br/>
+     Well as you can see, when I navigate back to that page, the session state is not updated, because according to SvelteKit it has already preloaded it, and we're good to go.<br/><br/>
+    ![4](https://github.com/tncrazvan/sveltekit-server-session/assets/6891346/76a8bd20-289c-4be6-b05d-41bd8266e196)
+    <br/>
 
 Which is obviously wrong.
 
@@ -414,7 +422,7 @@ It's much easier and more straightforward to simply disable preloading.
 
 # Full Example
 
-**You can find a full example leveraging the recommended usage [here](https://github.com/tncrazvan/sveltekit-server-session-example).**
+**You can find a [full example leveraging the recommended usage here](https://github.com/tncrazvan/sveltekit-server-session-example).**
 
 
 > [!NOTE]
