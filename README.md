@@ -136,7 +136,7 @@ Starting a session should always succeed, wether it is by creating a new session
 
 As explained above, in the [lifetime section](#lifetime), clients that present an expired session id have their sessions destroyed immediately.
 
-But sometimes clients want to create new sessions regardless if the current one has expired or not.
+But sometimes clients want to create new sessions regardless if the current one has expired or not.\
 Other times clients abandon their sessions and never awaken them again.
 
 These use cases can be a problem.
