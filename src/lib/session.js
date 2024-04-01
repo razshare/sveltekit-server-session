@@ -213,6 +213,14 @@ let _interface = {
 
 export const session = {
   /**
+   * Set the lifetime of all sessions.\
+   * Default value is `7` days (which is `60 * 60 * 24 * 7` seconds).
+   * @param {{seconds:number}} payload
+   */
+  setDurationUnix({ seconds }) {
+    durationUnix = seconds
+  },
+  /**
    * Get the current session operations.
    * @returns {SessionInterface}
    */
@@ -274,7 +282,7 @@ export const session = {
 
     const timer = setTimeout(async function run() {
       await sessionLocal.destroy()
-    })
+    }, sessionLocal.getRemainingSeconds() * 1000)
 
     sessionLocal.addEventListener('destroy', function run() {
       clearTimeout(timer)
