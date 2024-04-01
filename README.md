@@ -203,8 +203,8 @@ This is simply achieved through the event loop, using a `Timer` through `setTime
 
 You can customize your sessions behavior with `session.setOperations()`.
 
-All non local operations related to session management are described by `SessionInterface`.\
-Even though some operations may appear to act directly on an instance of a session, like `.destroy()`, in reality they all use only operations defined bt `SessionInterface`.
+All operations related to session management are defined by `SessionInterface`.\
+Even though some operations may appear to act directly on an instance of a session, like `.destroy()`, in reality they all use only operations defined by `SessionInterface`.
 
 This means you have total control over how sessions are retrieved, modified and validated.
 
