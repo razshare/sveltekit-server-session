@@ -124,7 +124,7 @@ Whenever you start a session you're actually trying to retrieve a `KITSESSID` co
 
 If the client doesn't hold a session id cookie, then it means it has no session, then a new one is created.
 
-If the client does have a session id but is expired, then the relative session is immediately destroyed, and a new session is created.\
+If the client does have a session id but is expired, then the relative session is immediately destroyed, then a new session is created.\
 This new session doesn't contain any of the old session's data.
 
 Finally, if the client has a valid session id cookie, the relative session is retrieved.
