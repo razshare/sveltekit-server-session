@@ -163,14 +163,14 @@ function delay(milliseconds) {
 export async function GET({ cookies }) {
   const {
     error,
-    value: { destroy },
+    value: { destroy },    // <=== Obtain the function here.
   } = await session.start({ cookies })
 
   if (error) {
     return new Response(error.message, { status: 500 })
   }
 
-  await destroy()
+  await destroy()    // Destroy the session here.
 
   await delay(3000)
 
