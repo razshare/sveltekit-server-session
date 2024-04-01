@@ -201,7 +201,7 @@ This is simply achieved through the event loop, using a `Timer` through `setTime
 
 # Custom behavior
 
-You can customize your session manager's behavior with `session.setOperations()`.
+You can customize your sessions behavior with `session.setOperations()`.
 
 All non local operations related to session management are described by `SessionInterface`.\
 Even though some operations may appear to act directly on an instance of a session, like `.destroy()`, in reality they all use only operations defined bt `SessionInterface`.
