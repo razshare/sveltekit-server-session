@@ -101,7 +101,7 @@ function create({ id, data }) {
     },
     addEventListener(event, callback) {
       const callbacks = events.get(event)
-      if (!callbacks) {
+      if (!callbacks || callbacks.includes(callback)) {
         return
       }
       callbacks.push(callback)
