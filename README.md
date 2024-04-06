@@ -106,8 +106,9 @@ npm i -D sveltekit-server-session
     ```svelte
     <!-- src/routes/+page.svelte -->
     <script>
+      // Load session data.
       /** @type {import('./$types').PageData} */
-      export let data // Load session data.
+      export let data
 
       let sending = false
 
