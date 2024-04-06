@@ -1,6 +1,6 @@
 {
   "name": "sveltekit-server-session",
-  "version": "0.1.7",
+  "version": "0.1.8",
   "scripts": {
     "dev": "vite dev",
     "build": "vite build && npm run package",
@@ -28,7 +28,7 @@
     "@microsoft/fetch-event-source": "^2.0.1",
     "@sveltejs/kit": "^1.25.2 || ^2.0.0",
     "svelte": "^4.0.0",
-    "sveltekit-unsafe": "^0.1.1"
+    "svelte-unsafe": "^0.1.0"
   },
   "devDependencies": {
     "@sveltejs/adapter-auto": "^3.0.0",
