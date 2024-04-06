@@ -191,6 +191,5 @@ It's much easier and more straightforward to simply disable preloading.
 > once to properly generate your glue types.
 
 > [!NOTE]
-> Due to technical limitations, and frankly also
-> for security reasons, sessions are only directly available under `*.server.js` and `*.server.ts` files.\
+> Sessions are only directly available under `*.server.js` and `*.server.ts` files.\
 > Sessions are meant to be private data, so they will never be directly available [under universal files](https://kit.svelte.dev/docs/load#universal-vs-server) like `+page.js`, for example.
