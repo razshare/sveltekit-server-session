@@ -21,7 +21,7 @@
  * @property {any} data
  */
 
-import { ok, error } from 'sveltekit-unsafe'
+import { ok, error } from 'svelte-unsafe'
 import { uuid } from './uuid'
 
 let sessionKey = 'KITSESSID'
@@ -136,38 +136,38 @@ function create({ id, data }) {
 /**
  * @callback Exists
  * @param {string} id Session id.
- * @returns {Promise<import('sveltekit-unsafe').Unsafe<boolean>>}
+ * @returns {Promise<import('svelte-unsafe').Unsafe<boolean>>}
  */
 
 /**
  * @callback IsValid
  * @param {string} id Session id.
- * @returns {Promise<import('sveltekit-unsafe').Unsafe<boolean>>}
+ * @returns {Promise<import('svelte-unsafe').Unsafe<boolean>>}
  */
 
 /**
  * @callback Has
  * @param {string} id Session id.
- * @returns {Promise<import('sveltekit-unsafe').Unsafe<boolean>>}
+ * @returns {Promise<import('svelte-unsafe').Unsafe<boolean>>}
  */
 
 /**
  * @callback Get
  * @param {string} id Session id.
- * @returns {Promise<import('sveltekit-unsafe').Unsafe<import('./types').Session>>}
+ * @returns {Promise<import('svelte-unsafe').Unsafe<import('./types').Session>>}
  */
 
 /**
  * @callback Delete
  * @param {string} id Session id.
- * @returns {Promise<import('sveltekit-unsafe').Unsafe<void>>}
+ * @returns {Promise<import('svelte-unsafe').Unsafe<void>>}
  */
 
 /**
  * @callback Set
  * @param {string} id Session id.
  * @param {import('./types').Session} session
- * @returns {Promise<import('sveltekit-unsafe').Unsafe<void>>}
+ * @returns {Promise<import('svelte-unsafe').Unsafe<void>>}
  */
 
 /**
@@ -238,7 +238,7 @@ export const session = {
    * Start a parked session from `cookies` or create a new one if no
    * parked session is found or is expired.\
    * @param {StartPayload} payload
-   * @returns {Promise<import('sveltekit-unsafe').Unsafe<import('./types').Session>>}
+   * @returns {Promise<import('svelte-unsafe').Unsafe<import('./types').Session>>}
    */
   async start({ cookies }) {
     let id = cookies.get(sessionKey) ?? ''
@@ -293,7 +293,7 @@ export const session = {
   /**
    * Destroy a session.
    * @param {{id:string}} payload
-   * @returns {Promise<import('sveltekit-unsafe').Unsafe<void>>} Error if no session with the given `id` is found, otherwise success.
+   * @returns {Promise<import('svelte-unsafe').Unsafe<void>>} Error if no session with the given `id` is found, otherwise success.
    */
   async destroy({ id }) {
     const getAttempt = await _interface.get(id)
@@ -324,7 +324,7 @@ export const session = {
     }
     flushing = true
     /**
-     * @type {Array<Promise<import('sveltekit-unsafe').Unsafe<void>>>}
+     * @type {Array<Promise<import('svelte-unsafe').Unsafe<void>>>}
      */
     const destructors = []
     for (const [, session] of map) {

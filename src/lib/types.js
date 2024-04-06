@@ -40,7 +40,7 @@ export {}
 
 /**
  * @callback Destroy
- * @returns {Promise<import("sveltekit-unsafe").Unsafe<void>>}
+ * @returns {Promise<import("svelte-unsafe").Unsafe<void>>}
  */
 
 /**
