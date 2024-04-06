@@ -52,7 +52,7 @@ npm i -D sveltekit-server-session
         return new Response(error.message, { status: 500 })
       }
 
-      // Saving session to `locals`.
+      // Save session to `locals`.
       event.locals.session = sessionLocal
 
       // Resolve the sveltekit response.
