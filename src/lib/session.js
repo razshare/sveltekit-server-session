@@ -86,9 +86,9 @@ function create({ id, data }) {
         })
       }
       destroying = true
-      const destroyAttempt = await _interface.delete(id)
-      if (destroyAttempt.error) {
-        return destroyAttempt
+      const [, destroyError] = await _interface.delete(id)
+      if (destroyError) {
+        return error(destroyError)
       }
       destroyed = true
       const callbacks = events.get('destroy') ?? []
@@ -247,11 +247,11 @@ export const session = {
       let exists = true
       do {
         id = uuid()
-        const existsAttempt = await _interface.exists(id)
-        if (existsAttempt.error) {
-          return error(existsAttempt.error)
+        const [existsValue, existsError] = await _interface.exists(id)
+        if (existsError) {
+          return error(existsError)
         }
-        exists = existsAttempt.value
+        exists = existsValue
       } while (exists)
     }
 
@@ -260,23 +260,23 @@ export const session = {
      */
     let sessionLocal
 
-    const hasAttempt = await _interface.has(id)
+    const [hasValue, hasError] = await _interface.has(id)
 
-    if (hasAttempt.error) {
-      return error(hasAttempt.error)
+    if (hasError) {
+      return error(hasError)
     }
 
-    if (hasAttempt.value) {
-      const getAttempt = await _interface.get(id)
-      if (getAttempt.error) {
-        return error(getAttempt.error)
+    if (hasValue) {
+      const [getValue, getError] = await _interface.get(id)
+      if (getError) {
+        return error(getError)
       }
-      sessionLocal = getAttempt.value
+      sessionLocal = getValue
     } else {
       sessionLocal = create({ id, data: new Map() })
-      const setAttempt = await _interface.set(id, sessionLocal)
-      if (setAttempt.error) {
-        return error(setAttempt.error)
+      const [, setError] = await _interface.set(id, sessionLocal)
+      if (setError) {
+        return error(setError)
       }
     }
 
@@ -296,19 +296,19 @@ export const session = {
    * @returns {Promise<import('svelte-unsafe').Unsafe<void>>} Error if no session with the given `id` is found, otherwise success.
    */
   async destroy({ id }) {
-    const getAttempt = await _interface.get(id)
-    if (getAttempt.error) {
-      return error(getAttempt.error)
+    const [getValue, getError] = await _interface.get(id)
+    if (getError) {
+      return error(getError)
     }
-    const session = getAttempt.value
+    const session = getValue
 
     if (!session) {
       return error(`Session ${id} not found.`)
     }
 
-    const deleteAttempt = await _interface.delete(id)
-    if (deleteAttempt.error) {
-      return error(deleteAttempt.error)
+    const [, deleteError] = await _interface.delete(id)
+    if (deleteError) {
+      return error(deleteError)
     }
 
     return ok()
