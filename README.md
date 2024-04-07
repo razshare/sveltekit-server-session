@@ -134,26 +134,7 @@ npm i -D sveltekit-server-session
 
 # Don't Preload
 
-SvelteKit comes with preload features baked in, however these feature may result in some inconsistent behavior when dealing with server state, like sessions.
-
-Navigate to your `src/app.html` file and disable preloading by settings `data-sveltekit-preload-data` to `false` on your `body` element.
-
-```html
-<!DOCTYPE html/>
-<html lang="en">
-  <head>
-    <meta charset="utf-8" />
-    <link rel="icon" href="%sveltekit.assets%/favicon.png" />
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
-    %sveltekit.head%
-  </head>
-  <body data-sveltekit-preload-data="false"> <!-- Here. -->
-    <div>%sveltekit.body%</div>
-  </body>
-</html>
-```
-
-The reason for this is due to inconsistencies to how state may become out of sync after preloading.
+SvelteKit comes with preload features baked in, however this feature may cause some inconsistent behavior when dealing with sessions.
 
 Consider the following use case,
 
@@ -173,10 +154,27 @@ Consider the following use case,
 
 Which is obviously wrong.
 
+To fix this you need to disable preloading.
+
+Navigate to your `src/app.html` file and disable preloading by settings `data-sveltekit-preload-data` to `false` on your `body` element.
+
+```html
+<!DOCTYPE html/>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <link rel="icon" href="%sveltekit.assets%/favicon.png" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    %sveltekit.head%
+  </head>
+  <body data-sveltekit-preload-data="false"> <!-- Here. -->
+    <div>%sveltekit.body%</div>
+  </body>
+</html>
+```
+
 You could technically disable preloading for specific cases and avoid the issue in that way, but at some point your whole application will be filled with links that point to some page that depends on the server session.\
 It's just simply not worth the headache.
-
-It's much easier and more straightforward to simply disable preloading.
 
 > [!NOTE]
 > Obviously you can still enable preload for resources like assets by manually adding 
