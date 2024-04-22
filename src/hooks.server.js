@@ -6,7 +6,7 @@ import { session } from '$lib/session'
  */
 export async function handle({ event, resolve }) {
   // Start the session.
-  const { error, value: sessionLocal } = await session.start({
+  const [sessionLocal, error] = await session.start({
     cookies: event.cookies,
   })
 
