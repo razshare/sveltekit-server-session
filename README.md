@@ -130,7 +130,41 @@ npm i -D sveltekit-server-session
 
 ![Peek 2024-04-01 03-15](https://github.com/tncrazvan/sveltekit-server-session/assets/6891346/c633f001-bead-4d94-9927-c1602cd1dfac)
 
+# Customization
 
+Every single session related operation like validation, creation, update, deletion and so on, is described by `SessionInterface`.
+
+You can use `session.setOperations()` to overwrite these operations by providing your own `SessionInterface` implementation
+```js
+session.setOperations({
+  async exists(id) {
+    return ok(map.has(id))
+  },
+  async isValid(id) {
+    const session = map.get(id)
+    if (!session) {
+      return ok(false)
+    }
+    return ok(session.getRemainingSeconds() > 0)
+  },
+  async has(id) {
+    return ok(map.has(id))
+  },
+  async get(id) {
+    return ok(map.get(id))
+  },
+  async set(id, session) {
+    map.set(id, session)
+    return ok()
+  },
+  async delete(id) {
+    map.delete(id)
+    return ok()
+  },
+})
+```
+
+This is a simple in memory session implementation, but the sky is the limit, you could even fetch and persist sessions to a remote database.
 
 # Don't Preload
 
